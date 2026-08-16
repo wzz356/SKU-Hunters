@@ -247,8 +247,10 @@ async def action_generate_plan_card(plan_id: str, payload: dict):
     opportunity_id = payload.get("opportunity_id")
     if not opportunity_id:
         raise HTTPException(422, detail={"error": {"code": "OPPORTUNITY_REQUIRED", "message": "opportunity_id 必填"}})
+    # revise_hint：plan_card_ready 下携带即"应用修改意见重新生成"
+    revise_hint = (payload.get("revise_hint") or "").strip()
     try:
-        card = await asyncio.to_thread(pipeline.generate_plan_card, plan, opportunity_id)
+        card = await asyncio.to_thread(pipeline.generate_plan_card, plan, opportunity_id, revise_hint)
     except StateTransitionError as e:
         raise _state_transition_error(e) from e
     except LLMGenerationError as e:

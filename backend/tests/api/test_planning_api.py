@@ -328,3 +328,71 @@ def test_update_brief_archived_409(client):
     r = client.put(f"/api/v1/plans/{plan_id}/brief", json={"brief": dict(VALID_BRIEF)})
     assert r.status_code == 409
     assert r.json()["detail"]["error"]["code"] == "INVALID_TRANSITION"
+
+# ── 应用修改意见重生成企划卡（攻坚会 2026-08-16）─────────────
+
+def _make_plan_card_ready(plan_id):
+    """直接构造 plan_card_ready 状态（绕过生成链路，测试只锁 HTTP/状态机契约）"""
+    plan = repository.get_plan(plan_id)
+    plan["status"] = "plan_card_ready"
+    plan["opportunities"] = [{
+        "id": "opp-1", "title": "方向A", "direction": "d", "pitch": "p",
+        "keywords": [], "evidence": [], "priceBand": "49-99 元",
+    }]
+    plan["plan_card"] = {"name": "旧方案", "concept": "c", "features": ["f"]}
+
+
+def _stub_builders(monkeypatch, captured):
+    """打桩 LLM 组装：捕获 revise_hint，返回最小合法卡"""
+    def fake_build(plan, opportunity, revise_hint=""):
+        captured["hint"] = revise_hint
+        return {"name": "新方案", "conceptImage": "", "concept": "c2",
+                "designLanguage": "d", "keywords": [], "features": ["f2"],
+                "fusion": "", "pricing": {}, "schedule": [], "validation": [],
+                "costCheck": {}, "processLog": [], "opportunityId": opportunity["id"]}
+    monkeypatch.setattr("app.planning.service._build_dynamic_plan_card", fake_build)
+    monkeypatch.setattr("app.planning.service._build_product_proposal", lambda plan, opp: {})
+
+
+def test_apply_revise_regenerates_card_and_logs(client, monkeypatch):
+    captured = {}
+    _stub_builders(monkeypatch, captured)
+    plan_id = _create(client)
+    _make_plan_card_ready(plan_id)
+    r = client.post(
+        f"/api/v1/plans/{plan_id}/actions/generate-plan-card",
+        json={"opportunity_id": "opp-1", "revise_hint": "配色再粉一点"},
+    )
+    assert r.status_code == 200, r.text
+    assert captured["hint"] == "配色再粉一点"
+    assert r.json()["plan_card"]["name"] == "新方案"
+    plan = repository.get_plan(plan_id)
+    assert plan["status"] == "plan_card_ready"
+    # 修改意见入档（applied 标记区别于纯沟通记录）
+    assert plan["revise_logs"][-1]["message"] == "配色再粉一点"
+    assert plan["revise_logs"][-1]["applied"] is True
+
+
+def test_regenerate_without_hint_leaves_revise_logs_empty(client, monkeypatch):
+    captured = {}
+    _stub_builders(monkeypatch, captured)
+    plan_id = _create(client)
+    _make_plan_card_ready(plan_id)
+    r = client.post(
+        f"/api/v1/plans/{plan_id}/actions/generate-plan-card",
+        json={"opportunity_id": "opp-1"},
+    )
+    assert r.status_code == 200, r.text
+    assert captured["hint"] == ""
+    assert repository.get_plan(plan_id)["revise_logs"] == []
+
+
+def test_generate_plan_card_409_from_brief_locked(client):
+    """状态机仍拦截非法前置：brief_locked 不可直接生成企划卡"""
+    plan_id = _create(client)
+    r = client.post(
+        f"/api/v1/plans/{plan_id}/actions/generate-plan-card",
+        json={"opportunity_id": "opp-1"},
+    )
+    assert r.status_code == 409
+    assert r.json()["detail"]["error"]["code"] == "INVALID_TRANSITION"

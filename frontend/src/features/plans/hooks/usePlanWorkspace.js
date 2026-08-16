@@ -109,12 +109,12 @@ export default function usePlanWorkspace(planId) {
     }
   }, [planId]);
 
-  // ── 原子动作：生成企划卡 ──────────────────────────────
-  const runGeneratePlanCard = useCallback(async (opportunityId) => {
+  // ── 原子动作：生成企划卡（reviseHint 非空 = 应用修改意见重生成）──
+  const runGeneratePlanCard = useCallback(async (opportunityId, reviseHint = '') => {
     setPendingAction('plan-card');
     setError(null);
     try {
-      const data = await generatePlanCard(opportunityId, planId);
+      const data = await generatePlanCard(opportunityId, planId, reviseHint);
       setPlan((p) => (p ? { ...p, status: data.status, plan_card: data.plan_card, product_proposal: data.product_proposal, selected_opportunity: opportunityId } : p));
       return data.plan_card;
     } catch (e) {

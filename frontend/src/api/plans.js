@@ -41,10 +41,10 @@ export async function generateOpportunities(planId) {
 }
 
 /** ④⑤⑥ 原子动作：选定方向生成企划卡 → 返回 { status, plan_card } */
-export async function generatePlanCard(opportunityId, planId) {
+export async function generatePlanCard(opportunityId, planId, reviseHint = '') {
   return request(`/plans/${planId}/actions/generate-plan-card`, {
     method: 'POST',
-    body: { opportunity_id: opportunityId },
+    body: { opportunity_id: opportunityId, ...(reviseHint ? { revise_hint: reviseHint } : {}) },
   });
 }
 

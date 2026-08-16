@@ -189,6 +189,7 @@ export default function PlanCard({ card, proposal, opportunity, brief, status, i
   const [reviewChats, setReviewChats] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
+  const [applying, setApplying] = useState(false);
   const [logDone, setLogDone] = useState(false);
   const chatEnd = useRef(null);
 
@@ -208,6 +209,23 @@ export default function PlanCard({ card, proposal, opportunity, brief, status, i
       setChats((cs) => [...cs, { role: 'ai', text: `改稿沟通失败：${e?.message || '请确认后端在线'}` }]);
     } finally {
       setSending(false);
+    }
+  };
+
+  // 应用修改并重新生成（攻坚会 2026-08-16：改稿从"只答不改"升级为真重生成）
+  const applyRevise = async (text) => {
+    const message = (text || input).trim();
+    if (!message || sending || applying || isArchived) return;
+    setInput('');
+    setApplying(true);
+    setChats((cs) => [...cs, { role: 'user', text: message }]);
+    try {
+      await onGenerate?.(opportunity?.id, message);
+      setChats((cs) => [...cs, { role: 'ai', text: '已按修改意见重新生成企划卡：方案与概念图已更新，请查看上方新方案。' }]);
+    } catch (e) {
+      setChats((cs) => [...cs, { role: 'ai', text: `重新生成失败：${e?.message || '请确认后端在线'}` }]);
+    } finally {
+      setApplying(false);
     }
   };
 
@@ -399,14 +417,20 @@ export default function PlanCard({ card, proposal, opportunity, brief, status, i
             </div>
           )}
 
-          <Input.Search
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onSearch={() => sendRevise()}
-            enterButton={<><SendOutlined /> 提交修改意见</>}
-            placeholder="如：配色再粉一点 / 加一个挂绳功能 / 价格压到 55 元以内"
-            loading={sending}
-          />
+          <Space.Compact style={{ width: '100%' }}>
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onPressEnter={() => sendRevise()}
+              placeholder="如：配色再粉一点 / 加一个挂绳功能 / 价格压到 55 元以内"
+            />
+            <Button icon={<SendOutlined />} loading={sending} disabled={applying} onClick={() => sendRevise()}>
+              沟通
+            </Button>
+            <Button type="primary" loading={applying} disabled={sending} onClick={() => applyRevise()}>
+              应用修改并重新生成
+            </Button>
+          </Space.Compact>
         </Card>
       )}
     </div>

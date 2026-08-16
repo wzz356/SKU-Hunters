@@ -324,27 +324,36 @@ def generate_opportunities(plan: dict[str, Any]) -> list[dict[str, Any]]:
 
 # ── ④⑤⑥ 企划卡生成 ────────────────────────────────────
 
-def generate_plan_card(plan: dict[str, Any], opportunity_id: str) -> dict[str, Any] | None:
+def generate_plan_card(plan: dict[str, Any], opportunity_id: str, revise_hint: str = "") -> dict[str, Any] | None:
     """选定方向 → 生成完整新品企划卡（原子动作）
 
     一律走 _build_dynamic_plan_card（LLM 生成），无 fixture 模板路径。
-    前置状态 opportunities_ready；成功后 status → plan_card_ready。
-    返回值保持 camelCase 键名（前端契约）。
+    前置状态 opportunities_ready；plan_card_ready 下带 revise_hint 调用即
+    「应用修改意见重新生成」（覆盖旧卡，意见记入 revise_logs）。
+    成功后 status → plan_card_ready。返回值保持 camelCase 键名（前端契约）。
     """
     with plan_write_lock(plan["plan_id"]):
-        if plan.get("status") != "opportunities_ready":
+        allowed = {"opportunities_ready", "plan_card_ready"}
+        if plan.get("status") not in allowed:
             raise StateTransitionError("opportunities_ready", plan.get("status"), "generate-plan-card")
         opportunity = _find_opportunity(plan, opportunity_id)
         if opportunity is None:
             return None
 
-        card = _build_dynamic_plan_card(plan, opportunity)
+        card = _build_dynamic_plan_card(plan, opportunity, revise_hint=revise_hint)
         proposal = _build_product_proposal(plan, opportunity)
 
         plan["selected_opportunity"] = opportunity_id
         plan["plan_card"] = card
         plan["product_proposal"] = proposal  # 新品企划案（六模块，与旧 plan_card 并存）
         plan["status"] = "plan_card_ready"
+        if revise_hint:
+            plan.setdefault("revise_logs", []).append({
+                "message": revise_hint,
+                "reply": "已按修改意见重新生成企划卡（方案与概念图已更新）",
+                "timestamp": _now(),
+                "applied": True,
+            })
         _save_state()
     return card
 

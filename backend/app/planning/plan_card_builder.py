@@ -98,8 +98,12 @@ def _insights_digest(insights: dict | None) -> str:
     return "\n".join(lines)
 
 
-def _llm_plan_card_fields(plan: dict, opportunity: dict) -> dict[str, Any]:
-    """LLM 生成企划卡内容字段（schema 校验不过重试 1 次，仍失败抛 LLMGenerationError）"""
+def _llm_plan_card_fields(plan: dict, opportunity: dict, revise_hint: str = "") -> dict[str, Any]:
+    """LLM 生成企划卡内容字段（schema 校验不过重试 1 次，仍失败抛 LLMGenerationError）
+
+    revise_hint 非空时进入"应用修改"模式：附带当前企划卡 + 修改意见，
+    要求 LLM 在现方案基础上落实修改后重新输出完整方案。
+    """
     from app.engine import llm
 
     brief = plan["brief"]
@@ -120,8 +124,18 @@ def _llm_plan_card_fields(plan: dict, opportunity: dict) -> dict[str, Any]:
         f"关键词：{'、'.join(opportunity.get('keywords', []) or [])}\n"
         f"依据：{evidence_text}\n\n"
         f"{_insights_digest(plan.get('insights'))}\n\n"
-        f"请输出「{category}」企划卡 JSON。"
     )
+    if revise_hint:
+        card = plan.get("plan_card") or {}
+        user_prompt += (
+            f"【当前方案】\n"
+            f"名称：{card.get('name', '')}\n概念：{card.get('concept', '')}\n"
+            f"设计语言：{card.get('designLanguage', '')}\n"
+            f"功能点：{card.get('features', [])}\n\n"
+            f"【商品经理修改意见】{revise_hint}\n"
+            f"请在当前方案基础上落实该修改意见，输出调整后的完整方案（未涉及的部分保持连贯）。\n\n"
+        )
+    user_prompt += f"请输出「{category}」企划卡 JSON。"
 
     last_error = "LLM 未返回内容"
     for attempt in range(2):
@@ -145,11 +159,12 @@ def _llm_plan_card_fields(plan: dict, opportunity: dict) -> dict[str, Any]:
     raise LLMGenerationError(f"企划卡 LLM 生成失败：{last_error}")
 
 
-def _build_dynamic_plan_card(plan: dict, opportunity: dict) -> dict:
+def _build_dynamic_plan_card(plan: dict, opportunity: dict, revise_hint: str = "") -> dict:
     """动态企划卡：LLM 生成内容 + 代码管定价/成本校验/即梦出图
 
     无论 mode 都尝试即梦出图，未配置/失败自动降级占位（fail-soft）。
     LLM 生成失败抛 LLMGenerationError（API 层映射 503），不产假数据。
+    revise_hint：商品经理修改意见，非空时按意见重新生成方案。
     """
     brief = plan["brief"]
     cost_limit = float(brief.get("cost_limit", brief.get("costLimit", 25)))
@@ -158,7 +173,7 @@ def _build_dynamic_plan_card(plan: dict, opportunity: dict) -> dict:
     price_band = opportunity.get("priceBand", "49-99 元")
     price = _derive_price_from_band(price_band)
 
-    fields = _llm_plan_card_fields(plan, opportunity)
+    fields = _llm_plan_card_fields(plan, opportunity, revise_hint=revise_hint)
 
     concept_image = jimeng.generate_concept_image(
         prompt=_concept_prompt_dynamic(opportunity, brief),
@@ -170,6 +185,10 @@ def _build_dynamic_plan_card(plan: dict, opportunity: dict) -> dict:
     process_log = [
         f"承接方向「{direction}」：锁定核心创意",
         "LLM 创意设计：基于机会卡 + 五看洞察生成概念/功能/节奏",
+    ]
+    if revise_hint:
+        process_log.append(f"应用修改意见：{revise_hint[:50]}")
+    process_log += [
         f"即梦文生图：{'概念图已生成' if concept_image else '未配置或生成失败，自动降级占位'}",
         f"定价推导：{price_band} 机会带 → 建议 {price:g} 元",
     ]
