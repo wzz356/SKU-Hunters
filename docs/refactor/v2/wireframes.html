@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKU Hunters 前端线框 · wireframes</title>
+<style>
+  /* ============================================================
+     SKU Hunters 前端线框源文件（可编辑）
+     用途：低保真布局示意，标注信息架构与区块。
+     响应式断点：xs(<576) / sm(≥576) / md(≥768) / lg(≥992) / xl(≥1200)
+     背景：暖灰 #F7F7F8（App 视口）/ 白色 #FFFFFF（内容面板）
+     说明：灰框=占位块，蓝字=区块名，虚线框=状态变体
+  ============================================================ */
+  :root{
+    --bg:#F7F7F8; --panel:#fff; --line:#D9D9D9; --line-strong:#BFBFBF;
+    --label:#595959; --accent:#7A5FD0; --muted:#8C8C8C;
+    --dashed:#BFBFBF;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#ECECEC;font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;color:#262626;padding:24px;}
+
+  .doc-title{font-size:18px;font-weight:600;margin:0 0 4px;}
+  .doc-sub{font-size:12px;color:#8C8C8C;margin:0 0 20px;}
+
+  /* 每页一个画板 */
+  .board{margin:0 auto 32px;max-width:1440px;}
+  .board-head{font-size:14px;font-weight:600;margin:0 0 8px;padding:4px 0;border-bottom:2px solid #D9D9D9;}
+  .board-note{font-size:11px;color:#8C8C8C;margin:0 0 10px;}
+
+  /* 线框画布：模拟 App 视口（暖灰底） */
+  .canvas{background:var(--bg);border:1px solid var(--line-strong);border-radius:4px;padding:12px;}
+
+  /* 布局骨架 */
+  .app-shell{display:flex;gap:12px;min-height:400px;}
+  .sider{width:120px;flex:none;background:#fff;border:1px solid var(--line);border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:6px;}
+  .content{flex:1;display:flex;flex-direction:column;gap:10px;}
+
+  /* 内容面板（白底） */
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;}
+
+  /* 占位块 */
+  .box{border:1px solid var(--line);border-radius:4px;padding:8px;font-size:11px;color:var(--label);background:#fff;min-height:20px;display:flex;align-items:center;justify-content:center;text-align:center;}
+  .box.sm{min-height:16px;font-size:10px;padding:4px;}
+  .box.tag{min-height:14px;font-size:10px;color:var(--accent);border-style:dashed;display:inline-flex;padding:2px 6px;}
+  .box.accent{border-color:var(--accent);color:var(--accent);}
+  .box.hint{background:#fafafa;border-style:dashed;color:var(--muted);}
+
+  .row{display:flex;gap:8px;flex-wrap:wrap;}
+  .col{flex:1;min-width:80px;display:flex;flex-direction:column;gap:6px;}
+  .grid{display:grid;gap:8px;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g2{grid-template-columns:repeat(2,1fr);}
+
+  /* 状态变体（虚线框标注） */
+  .variant{border:1px dashed var(--dashed);border-radius:6px;padding:8px;margin-top:8px;}
+  .variant-title{font-size:10px;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.5px;}
+
+  .tagline{font-size:10px;color:var(--accent);margin:0 0 6px;}
+
+  .footer-cta{display:flex;justify-content:center;margin-top:8px;}
+  .cta{border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:6px 16px;font-size:11px;background:#F6F3FF;}
+
+  /* 响应式：窄屏时侧栏收成图标 / 隐藏 */
+  @media (max-width: 991px){
+    .sider{width:48px;padding:6px;}
+    .sider .nav-label{display:none;}
+  }
+  @media (max-width: 767px){
+    .sider{display:none;}
+    .app-shell{flex-direction:column;}
+    .g3,.g2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<h1 class="doc-title">SKU Hunters · 前端线框</h1>
+<p class="doc-sub">低保真布局示意 · 暖灰 App 背景 + 白色内容面板 · 响应式 375/768/1440</p>
+
+<!-- ===================== 0. AppShell ===================== -->
+<div class="board">
+  <h2 class="board-head">0. AppShell（全局布局）</h2>
+  <p class="board-note">Sider（品牌块+分组导航）+ Content；窄屏 Sider 收图标栏，超窄屏改抽屉导航。</p>
+  <div class="canvas">
+    <div class="app-shell">
+      <div class="sider">
+        <div class="box sm" style="font-weight:600;">SKU Hunters</div>
+        <div class="box sm nav-label">— 企划流程 —</div>
+        <div class="box sm nav-label">任务中心</div>
+        <div class="box sm nav-label">— 洞察数据 —</div>
+        <div class="box sm nav-label">数据看板</div>
+        <div class="box sm nav-label">名创内部</div>
+        <div class="box sm nav-label">流行元素板</div>
+      </div>
+      <div class="content">
+        <div class="panel"><div class="box sm" style="border:none;justify-content:flex-start;">页面标题区 + 主 CTA（右上角）</div></div>
+        <div class="panel" style="flex:1;"><div class="box" style="border:none;min-height:200px;color:var(--muted);">页面主体（max-width 1200 居中）</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 1. Home 任务中心 ===================== -->
+<div class="board">
+  <h2 class="board-head">1. 任务中心（Home / TaskCenter）</h2>
+  <p class="board-note">统计卡 + 进行中/已归档分组 + 任务卡网格（Col xs24 / sm12 / md8）。</p>
+  <div class="canvas">
+    <div class="panel">
+      <div class="row" style="margin-bottom:8px;align-items:center;justify-content:space-between;">
+        <div class="box sm" style="font-weight:600;border:none;">新品企划任务</div>
+        <div class="cta">＋ 新建企划</div>
+      </div>
+      <div class="row" style="margin-bottom:10px;">
+        <div class="col"><div class="box sm">统计卡：进行中 n</div></div>
+        <div class="col"><div class="box sm">统计卡：已归档 n</div></div>
+      </div>
+      <div class="tagline">— 进行中 —</div>
+      <div class="grid g3">
+        <div class="box" style="border-left:3px solid #B7A8F5;">任务卡：状态色带 + 主题 + 品类·人群 + 环节</div>
+        <div class="box" style="border-left:3px solid #B7A8F5;">任务卡</div>
+        <div class="box" style="border-left:3px solid #B7A8F5;">任务卡</div>
+      </div>
+      <div class="tagline" style="margin-top:10px;">— 已归档 —（卡片色带灰）</div>
+      <div class="grid g3"><div class="box" style="border-left:3px solid #BBB;color:#8C8C8C;">任务卡（归档）</div></div>
+
+      <div class="variant">
+        <p class="variant-title">状态变体</p>
+        <div class="row">
+          <div class="col"><div class="box hint">loading：Spin 居中</div></div>
+          <div class="col"><div class="box hint">error：Alert + 重试按钮</div></div>
+          <div class="col"><div class="box hint">empty：无任务 Empty</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2. NewPlan ===================== -->
+<div class="board">
+  <h2 class="board-head">2. 新建企划（NewPlan）</h2>
+  <p class="board-note">表单按「基本信息 / 商业约束」分组卡片；逻辑不变。</p>
+  <div class="canvas">
+    <div class="panel" style="max-width:640px;margin:0 auto;">
+      <div class="box sm" style="font-weight:600;border:none;">新建新品企划</div>
+      <div class="grid g2" style="margin-top:8px;">
+        <div class="col">
+          <div class="box sm">— 基本信息 —</div>
+          <div class="box sm">主题 [input]</div>
+          <div class="box sm">品类 [select]</div>
+          <div class="box sm">市场 [select]</div>
+          <div class="box sm">人群 [input]</div>
+        </div>
+        <div class="col">
+          <div class="box sm">— 商业约束 —</div>
+          <div class="box sm">价格带/成本 [number]</div>
+          <div class="box sm">IP 策略 [checkbox]</div>
+          <div class="box sm">上新窗口 [input]</div>
+          <div class="box sm">商业目标 [checkbox]</div>
+        </div>
+      </div>
+      <div class="footer-cta"><div class="cta">创建企划，进入洞察</div></div>
+      <div class="variant">
+        <p class="variant-title">状态变体</p>
+        <div class="row">
+          <div class="col"><div class="box hint">校验错误：内联红字</div></div>
+          <div class="col"><div class="box hint">提交中：按钮 loading</div></div>
+          <div class="col"><div class="box hint">离开确认：弹「离开/继续编辑」</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 3. TaskFlow ===================== -->
+<div class="board">
+  <h2 class="board-head">3. 任务流程（TaskFlow · step 0–3）</h2>
+  <p class="board-note">顶部：标题 + SourceTag + Steps 步骤条；每步一个主 CTA。</p>
+  <div class="canvas">
+    <div class="panel">
+      <div class="row" style="margin-bottom:8px;align-items:center;gap:8px;">
+        <div class="box sm" style="font-weight:600;border:none;">主题 · 品类</div>
+        <div class="box tag">SourceTag</div>
+      </div>
+      <div class="box sm" style="margin-bottom:10px;">步骤条：○企划约束 ─ ○洞察驾驶舱 ─ ○机会生成 ─ ○新品企划卡</div>
+
+      <div class="tagline">step 0 · 企划约束</div>
+      <div class="box" style="max-width:720px;">约束：主题/品类/市场/人群/价格带/成本/IP/窗口/目标</div>
+      <div class="footer-cta"><div class="cta">确认约束，开始洞察分析</div></div>
+
+      <div class="tagline" style="margin-top:14px;">step 1 · 洞察驾驶舱（五看）</div>
+      <div class="grid g2">
+        <div class="box">趋势雷达（信号卡+折线+热词云）</div>
+        <div class="box">用户之声（痛点+场景环图+原声）</div>
+        <div class="box">竞品矩阵（四象限+价格带+真图墙）</div>
+        <div class="box">名创资产 + 流行元素 摘要</div>
+      </div>
+      <div class="footer-cta"><div class="cta">洞察完成，生成机会方向</div></div>
+
+      <div class="tagline" style="margin-top:14px;">step 2 · 机会生成</div>
+      <div class="grid g3">
+        <div class="box accent">🎀 IP 联名（证据¹²³⁴·契合IP）</div>
+        <div class="box">💡 痛点解决（证据¹²³⁴）</div>
+        <div class="box">✨ 场景情绪（证据¹²³⁴）</div>
+      </div>
+      <div class="footer-cta"><div class="cta">进入企划生成（选中后激活）</div></div>
+
+      <div class="tagline" style="margin-top:14px;">step 3 · 新品企划卡（六模块）</div>
+      <div class="grid g2">
+        <div class="box">①头部 ②概念图+Moodboard</div>
+        <div class="box">③设计语言+功能规格</div>
+        <div class="box">④定价+SKU分级+成本校验</div>
+        <div class="box">⑤上新节奏+商业化路径 ⑥改稿</div>
+      </div>
+      <div class="footer-cta"><div class="row"><div class="box sm">返回换方向（次）</div><div class="cta">归档企划案（主）</div></div></div>
+
+      <div class="variant">
+        <p class="variant-title">状态变体</p>
+        <div class="row">
+          <div class="col"><div class="box hint">generating：Spin + aria-busy</div></div>
+          <div class="col"><div class="box hint">error：Alert + 重试</div></div>
+          <div class="col"><div class="box hint">出图失败：占位 + 重试出图</div></div>
+          <div class="col"><div class="box hint">归档确认：弹窗</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4. 数据看板 ===================== -->
+<div class="board">
+  <h2 class="board-head">4. 数据看板（DataBoard）</h2>
+  <p class="board-note">品类大盘：热度排行 / 声量趋势 / 热销榜 / 价格带。</p>
+  <div class="canvas">
+    <div class="panel">
+      <div class="grid g2">
+        <div class="box">品类热度排行（横向条形）</div>
+        <div class="box">社媒声量趋势（折线 小红书/抖音）</div>
+        <div class="box">热销商品榜（表格，小屏横向滚动）</div>
+        <div class="box">价格带分布（进度条）</div>
+      </div>
+      <div class="variant"><p class="variant-title">状态变体</p><div class="row"><div class="col"><div class="box hint">loading / error+重试 / empty</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 5. 名创内部 ===================== -->
+<div class="board">
+  <h2 class="board-head">5. 名创内部（InsightBase）</h2>
+  <p class="board-note">历史爆品 / IP 资源库 / 设计语言。</p>
+  <div class="canvas">
+    <div class="panel">
+      <div class="grid g2">
+        <div class="box" style="min-height:120px;">历史爆品特征库（爆品卡列表）</div>
+        <div class="col">
+          <div class="box">IP 资源库（IP 卡）</div>
+          <div class="box">名创设计语言（Tag 组）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 6. 流行元素板 ===================== -->
+<div class="board">
+  <h2 class="board-head">6. 流行元素板（TrendGallery）</h2>
+  <p class="board-note">配色趋势（WGSN 式大色块）+ 花纹 + 形态 + 表情化。</p>
+  <div class="canvas">
+    <div class="panel">
+      <div class="box" style="min-height:80px;">配色趋势：大色块（高 ≥120px，色名叙事）</div>
+      <div class="grid g2" style="margin-top:8px;">
+        <div class="box">花纹图案</div>
+        <div class="box">形态结构</div>
+      </div>
+      <div class="box" style="margin-top:8px;">表情化趋势（emoji + 名称）</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 7. 404 ===================== -->
+<div class="board">
+  <h2 class="board-head">7. 404 页</h2>
+  <div class="canvas">
+    <div class="panel" style="text-align:center;max-width:480px;margin:0 auto;">
+      <div class="box sm" style="font-size:16px;font-weight:600;border:none;">404 · 任务不存在</div>
+      <div class="footer-cta"><div class="cta">返回任务中心</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 8. 移动端说明 ===================== -->
+<div class="board">
+  <h2 class="board-head">8. 移动端（375px）规范</h2>
+  <div class="canvas">
+    <div class="panel">
+      <div class="row">
+        <div class="col"><div class="box sm">抽屉导航（汉堡呼出）</div></div>
+        <div class="col"><div class="box sm">底部固定主 CTA</div></div>
+        <div class="col"><div class="box sm">表格横向滚动</div></div>
+        <div class="col"><div class="box sm">图表降级关键数值卡</div></div>
+      </div>
+      <div class="box hint" style="margin-top:8px;">触控目标 ≥44×44px</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

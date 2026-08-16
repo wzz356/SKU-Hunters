@@ -1,0 +1,230 @@
+{
+  "refreshed_at": "2026-08-13T08:49:43.130657+00:00",
+  "sections": {
+    "hot_search": {
+      "total_items": 50,
+      "scanned_sources": [
+        "weibo",
+        "baidu"
+      ],
+      "failed_sources": [
+        {
+          "source": "tiktok",
+          "detail": "请求/解析失败: ConnectError"
+        }
+      ],
+      "hits": []
+    },
+    "taobao_suggest": {
+      "suggestions": {
+        "小风扇": [
+          {
+            "query": "小风扇2026新款",
+            "heat": 100
+          },
+          {
+            "query": "小风扇手持",
+            "heat": 100
+          },
+          {
+            "query": "小风扇静音学生",
+            "heat": 100
+          },
+          {
+            "query": "小风扇便携式随身",
+            "heat": 100
+          },
+          {
+            "query": "小风扇桌面",
+            "heat": 100
+          },
+          {
+            "query": "小风扇静音办公室桌上",
+            "heat": 100
+          },
+          {
+            "query": "小风扇静音",
+            "heat": 100
+          },
+          {
+            "query": "小风扇制冷",
+            "heat": 100
+          },
+          {
+            "query": "小风扇插电款",
+            "heat": 100
+          },
+          {
+            "query": "小风扇学生宿舍",
+            "heat": 100
+          }
+        ],
+        "桌面风扇": [
+          {
+            "query": "桌面风扇静音",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇插电款",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇大风力",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇可摇头",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇办公室",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇小米",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇充电款",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇制冷",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇可爱",
+            "heat": 100
+          },
+          {
+            "query": "桌面风扇小型",
+            "heat": 100
+          }
+        ],
+        "露营风扇": [
+          {
+            "query": "露营风扇超长续航",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇灯",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇支架",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇太阳能",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇吊扇",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇usb",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇制冷",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇静音",
+            "heat": 100
+          },
+          {
+            "query": "露营风扇折叠",
+            "heat": 100
+          },
+          {
+            "query": "户外露营风扇",
+            "heat": 100
+          }
+        ],
+        "库洛米": [
+          {
+            "query": "库洛米裙子",
+            "heat": 100
+          },
+          {
+            "query": "库洛米玩偶",
+            "heat": 100
+          },
+          {
+            "query": "库洛米玩具",
+            "heat": 100
+          },
+          {
+            "query": "库洛米盲盒",
+            "heat": 100
+          },
+          {
+            "query": "库洛米挂件",
+            "heat": 100
+          },
+          {
+            "query": "库洛米生日礼物",
+            "heat": 100
+          },
+          {
+            "query": "库洛米水杯",
+            "heat": 100
+          },
+          {
+            "query": "库洛米贴纸",
+            "heat": 100
+          },
+          {
+            "query": "库洛米手机壳",
+            "heat": 100
+          },
+          {
+            "query": "库洛米包包",
+            "heat": 100
+          }
+        ]
+      },
+      "failed_keywords": []
+    },
+    "bilibili": {
+      "keywords": {
+        "工位改造": {
+          "scanned_videos": 474,
+          "total_results": 0,
+          "total_views": 0,
+          "scanned_partitions": [
+            "生活",
+            "时尚",
+            "动画",
+            "游戏",
+            "鬼畜"
+          ],
+          "failed_partitions": [],
+          "top_videos": []
+        },
+        "露营装备": {
+          "scanned_videos": 474,
+          "total_results": 0,
+          "total_views": 0,
+          "scanned_partitions": [
+            "生活",
+            "时尚",
+            "动画",
+            "游戏",
+            "鬼畜"
+          ],
+          "failed_partitions": [],
+          "top_videos": []
+        }
+      },
+      "failed_keywords": [
+        {
+          "keyword": "小风扇",
+          "detail": "全部 5 个分区采集失败: [bilibili] 分区榜[生活] 业务错误: code=-352, message=-352; [bilibili] 分区榜[时尚] 业务错误: code=-352, message=-352; [bilibili] 分区榜[动画] 业务错误: code=-352, message=-352; [bilibili] 分区榜[游戏] 业务错误: code=-352, message=-352; [bilibili] 分区榜[鬼畜] 业务错误: code=-352, message=-352"
+        }
+      ]
+    }
+  }
+}

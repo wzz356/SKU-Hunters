@@ -1,0 +1,4 @@
+[tool.ruff.lint.isort]
+# app/feishu 是后端本地包：无论从 backend/ 还是仓库根调用 ruff，
+# import 排序口径保持一致（CI 从根目录跑 ruff check backend/）
+known-first-party = ["app", "feishu"]

@@ -1,0 +1,29 @@
+{
+  "evidence_refs": [
+    {
+      "url": "https://trends.google.com/trends/explore?q=Labubu",
+      "title": "Labubu - 数据获取失败",
+      "snippet": "错误: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/expl"
+    },
+    {
+      "url": "https://trends.google.com/trends/explore?q=Chiikawa",
+      "title": "Chiikawa - 数据获取失败",
+      "snippet": "错误: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/expl"
+    },
+    {
+      "url": "https://trends.google.com/trends/explore?q=Pop Mart",
+      "title": "Pop Mart - 数据获取失败",
+      "snippet": "错误: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/expl"
+    },
+    {
+      "url": "https://trends.google.com/trends/explore?q=blind box",
+      "title": "blind box - 数据获取失败",
+      "snippet": "错误: HTTPSConnectionPool(host='trends.google.com', port=443): Max retries exceeded with url: /trends/expl"
+    }
+  ],
+  "category": "潮玩",
+  "region": "TH",
+  "trends": [],
+  "summary": "潮玩 品类在 TH 市场暂无有效趋势数据。",
+  "analysis_date": "2026-08-07"
+}

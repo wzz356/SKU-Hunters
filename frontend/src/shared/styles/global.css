@@ -1,0 +1,185 @@
+/* ============================================================
+ * SKU Hunters · 全局样式
+ * 依赖 tokens.css 的三层 token；此处只放跨组件通用样式与可访问性基础。
+ * ============================================================ */
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ── 语义层级辅助 ───────────────────────────────────────── */
+.app-bg { background: var(--color-bg); }
+.surface { background: var(--color-surface); }
+
+/* ── 焦点可见（可访问性红线）────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-action-primary);
+  outline-offset: 2px;
+}
+
+/* ── 动效尊重 prefers-reduced-motion ────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── 过程日志（分析感呈现）──────────────────────────────── */
+.process-log {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  line-height: 1.9;
+  margin-bottom: var(--space-md);
+}
+.process-log .log-line { opacity: 0; animation: fadeIn 0.3s forwards; }
+.process-log .log-line::before { content: '▸ '; color: var(--purple-400); }
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* ── 消费者原句卡片 ─────────────────────────────────────── */
+.quote-card {
+  background: var(--color-surface-alt);
+  border-left: 3px solid var(--purple-400);
+  padding: 10px 14px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-bottom: 10px;
+}
+.quote-card .quote-source {
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* ── 流行元素色板 ───────────────────────────────────────── */
+.swatch {
+  border-radius: var(--radius-lg);
+  height: 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 10px 12px;
+  color: #5a4a6a;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+.swatch .swatch-name { font-weight: 600; }
+.swatch .swatch-source { font-size: 11px; opacity: 0.75; }
+
+/* ── 概念图占位（即梦接入后替换）────────────────────────── */
+.concept-image {
+  border-radius: var(--radius-xl);
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  color: var(--color-action-primary);
+}
+.concept-image .concept-caption {
+  font-size: var(--font-size-body);
+  color: #9988cc;
+  margin-top: var(--space-md);
+}
+
+/* ── 方向卡 ─────────────────────────────────────────────── */
+.opp-card { transition: all 0.2s; cursor: pointer; height: 100%; }
+.opp-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+.opp-card.selected {
+  border: 2px solid var(--card-selected-border);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ── 企划卡板块标注 ─────────────────────────────────────── */
+.plan-section-tag {
+  font-size: 11px;
+  color: var(--color-section-label);
+  font-weight: 400;
+  margin-left: var(--space-sm);
+}
+
+/* ── 任务卡状态色带（状态不只用颜色：左侧 3px 竖条 + 文字）── */
+.task-card-strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px 0 0 2px;
+}
+.task-card-strip.active { background: var(--task-card-strip-active); }
+.task-card-strip.archived { background: var(--task-card-strip-archived); }
+
+/* ── 证据角标（灰色圆形上标）────────────────────────────── */
+.evidence-ref {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--gray-200);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  vertical-align: super;
+}
+
+/* ── IP 资源库（Insight Base）──────────────────────────── */
+.ip-stats-band {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2xl);
+  background: var(--grad-default);
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  margin-bottom: var(--space-lg);
+}
+.ip-stat-value { font-size: 26px; font-weight: 700; color: var(--color-action-primary); }
+.ip-stat-label { font-size: var(--font-size-caption); color: var(--color-text-muted); margin-top: 2px; }
+.ip-stats-note { margin-left: auto; font-size: 11px; color: var(--color-section-label); }
+.ip-matrix-note { font-size: 11px; color: var(--color-text-muted); }
+.ip-filters { display: flex; gap: var(--space-xl); flex-wrap: wrap; margin-bottom: var(--space-lg); }
+
+.ip-card { height: 100%; overflow: hidden; }
+.ip-card .ant-card-body { padding: 0; }
+.ip-cover { width: 100%; height: 120px; object-fit: cover; display: block; }
+.ip-cover-fallback {
+  background: var(--grad-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-action-primary);
+}
+.ip-card-body { padding: 12px 14px 14px; }
+.ip-card-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); }
+.ip-card-name { display: flex; align-items: center; gap: var(--space-sm); min-width: 0; }
+.ip-name-en { font-size: 11px; color: var(--color-text-muted); margin-left: 6px; }
+.ip-potential { font-size: 12px; color: var(--color-brand-accent); flex-shrink: 0; }
+.ip-tags { margin: 8px 0 4px; }
+.ip-logo { height: 24px; max-width: 72px; object-fit: contain; }
+.ip-field { font-size: var(--font-size-caption); color: var(--color-text-secondary); margin-top: 4px; display: flex; gap: var(--space-sm); }
+.ip-field span { flex-shrink: 0; color: var(--color-section-label); font-weight: 600; }
+.ip-history { font-size: 11px; color: var(--color-text-muted); margin-top: var(--space-sm); border-top: 1px dashed var(--color-border); padding-top: var(--space-sm); }
+.insight-product-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm); font-size: var(--font-size-caption); }
+.insight-product-heading b { word-break: break-word; }
+.brand-accent-text { color: var(--color-brand-accent); }
+.insight-product-note { font-size: var(--font-size-caption); color: var(--color-text-secondary); margin-top: 4px; word-break: break-word; }
+.insight-design-note { font-size: var(--font-size-caption); color: var(--color-text-muted); margin-top: var(--space-sm); }
+
+@media (max-width: 575px) {
+  .ip-stats-band { gap: var(--space-lg); padding: var(--space-lg); }
+  .ip-stats-note { width: 100%; margin-left: 0; }
+  .ip-filters .ant-segmented { max-width: 100%; overflow-x: auto; }
+}

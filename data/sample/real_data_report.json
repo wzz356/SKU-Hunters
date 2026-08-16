@@ -1,0 +1,133 @@
+{
+  "labubu": {
+    "taobao_demand": {
+      "keyword": "labubu",
+      "demand_breadth": 10,
+      "avg_heat": 100.0,
+      "top_demands": [
+        {
+          "query": "拉布布",
+          "heat": 100
+        },
+        {
+          "query": "拉布布娃衣",
+          "heat": 100
+        },
+        {
+          "query": "labubu娃衣",
+          "heat": 100
+        },
+        {
+          "query": "labubu拉布布",
+          "heat": 100
+        },
+        {
+          "query": "拉布布衣服",
+          "heat": 100
+        }
+      ],
+      "product_signals": [
+        "公仔",
+        "娃衣",
+        "挂件",
+        "毛绒",
+        "盲盒",
+        "衣服"
+      ]
+    },
+    "bilibili_ugc": {
+      "keyword": "labubu",
+      "scanned_videos": 380,
+      "total_results": 0,
+      "total_views": 0,
+      "avg_views": 0.0,
+      "top_videos": []
+    }
+  },
+  "chiikawa": {
+    "taobao_demand": {
+      "keyword": "chiikawa",
+      "demand_breadth": 10,
+      "avg_heat": 100.0,
+      "top_demands": [
+        {
+          "query": "chiikawa玩偶",
+          "heat": 100
+        },
+        {
+          "query": "chiikawa挂件",
+          "heat": 100
+        },
+        {
+          "query": "chiikawa公仔",
+          "heat": 100
+        },
+        {
+          "query": "chiikawa周边",
+          "heat": 100
+        },
+        {
+          "query": "chiikawa旗舰店",
+          "heat": 100
+        }
+      ],
+      "product_signals": [
+        "公仔",
+        "挂件",
+        "杯",
+        "盲盒"
+      ]
+    },
+    "bilibili_ugc": {
+      "keyword": "chiikawa",
+      "scanned_videos": 474,
+      "total_results": 0,
+      "total_views": 0,
+      "avg_views": 0.0,
+      "top_videos": []
+    }
+  },
+  "线条小狗": {
+    "taobao_demand": {
+      "keyword": "线条小狗",
+      "demand_breadth": 10,
+      "avg_heat": 100.0,
+      "top_demands": [
+        {
+          "query": "线条小狗盲盒",
+          "heat": 100
+        },
+        {
+          "query": "线条小狗挂件",
+          "heat": 100
+        },
+        {
+          "query": "线条小狗玩偶",
+          "heat": 100
+        },
+        {
+          "query": "线条小狗手机壳",
+          "heat": 100
+        },
+        {
+          "query": "线条小狗周边",
+          "heat": 100
+        }
+      ],
+      "product_signals": [
+        "挂件",
+        "摆件",
+        "杯",
+        "盲盒"
+      ]
+    },
+    "bilibili_ugc": {
+      "keyword": "线条小狗",
+      "scanned_videos": 380,
+      "total_results": 0,
+      "total_views": 0,
+      "avg_views": 0.0,
+      "top_videos": []
+    }
+  }
+}

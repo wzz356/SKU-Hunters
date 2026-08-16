@@ -1,0 +1,88 @@
+{
+  "notes": [
+    {
+      "id": "xhs_note_001",
+      "note_url": "https://www.xiaohongshu.com/explore/note001",
+      "title": "夏日便携小风扇测评｜宿舍党必入",
+      "content": "最近入手了这款便携小风扇，风力大又静音，宿舍党真的爱了。续航也很能打，出门带着超方便，价格只要几十块，性价比拉满。",
+      "publish_time": "2026-07-01",
+      "likes": 320,
+      "collects": 150,
+      "comments": 45,
+      "tags": ["小风扇", "便携", "宿舍好物", "夏日"],
+      "query_keyword": "便携小风扇",
+      "captured_at": "2026-07-10T08:00:00Z",
+      "source_type": "xhs"
+    },
+    {
+      "id": "xhs_note_002",
+      "note_url": "https://www.xiaohongshu.com/explore/note002",
+      "title": "挂脖风扇真的凉快吗？一周实测",
+      "content": "挂脖风扇用了整整一周，户外暴走也不闷热，就是续航稍微差一点。夏天通勤神器，姐妹们冲。",
+      "publish_time": "2026-07-05",
+      "likes": 520,
+      "collects": 210,
+      "comments": 88,
+      "tags": ["挂脖风扇", "户外", "通勤"],
+      "query_keyword": "挂脖风扇",
+      "captured_at": "2026-07-11T09:00:00Z",
+      "source_type": "xhs"
+    },
+    {
+      "id": "xhs_note_003",
+      "note_url": "https://www.xiaohongshu.com/explore/note003",
+      "title": "labubu 娃衣怎么选？平价又好看",
+      "content": "labubu 的娃衣真的太多选择了，平价好搭，摆拍神器。推荐新手从基础款入手，百搭又耐看。",
+      "publish_time": "2026-07-08",
+      "likes": 800,
+      "collects": 430,
+      "comments": 120,
+      "tags": ["labubu", "娃衣", "摆拍", "潮玩"],
+      "query_keyword": "labubu娃衣",
+      "captured_at": "2026-07-12T10:00:00Z",
+      "source_type": "xhs"
+    },
+    {
+      "id": "xhs_note_004",
+      "note_url": "https://www.xiaohongshu.com/explore/note004",
+      "title": "桌面小摆件合集｜治愈系打工位",
+      "content": "桌面摆件真的很能提升幸福感，这几个治愈系小物颜值超高，放工位上每天上班心情都变好。",
+      "publish_time": "2026-07-12",
+      "likes": "1,200",
+      "collects": 660,
+      "comments": "150",
+      "tags": "桌面摆件,治愈系,打工位,好物分享",
+      "query_keyword": "桌面摆件",
+      "captured_at": "2026-07-13T08:30:00Z",
+      "source_type": "xhs"
+    },
+    {
+      "id": "xhs_note_005",
+      "note_url": "https://www.xiaohongshu.com/explore/note005",
+      "title": "一条含隐私字段的示例笔记（将脱敏处理）",
+      "content": "联系我请拨打 13800138000 或发邮件到 test@example.com，私信不回。",
+      "publish_time": "2026-07-15",
+      "likes": 10,
+      "collects": 2,
+      "comments": 1,
+      "tags": ["示例"],
+      "query_keyword": "隐私示例",
+      "captured_at": "2026-07-15T11:00:00Z",
+      "source_type": "xhs"
+    },
+    {
+      "id": "xhs_note_006",
+      "note_url": "https://www.xiaohongshu.com/explore/note002",
+      "title": "（重复笔记，captured_at 较旧，将被去重）",
+      "content": "这条 note_url 与 note002 相同但采集时间更早，导入时应被去重掉。",
+      "publish_time": "2026-07-02",
+      "likes": 5,
+      "collects": 1,
+      "comments": 0,
+      "tags": ["重复"],
+      "query_keyword": "挂脖风扇",
+      "captured_at": "2026-07-08T08:00:00Z",
+      "source_type": "xhs"
+    }
+  ]
+}

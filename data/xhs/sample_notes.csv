@@ -1,0 +1,4 @@
+id,note_url,title,content,publish_time,likes,collects,comments,tags,query_keyword,captured_at,source_type
+csv_001,https://www.xiaohongshu.com/explore/csv001,迷你手持小风扇推荐,学生党必备的迷你小风扇 风力足又轻便,2026-07-18,210,90,30,迷你风扇;学生党;宿舍,迷你小风扇,2026-07-20T08:00:00Z,xhs
+csv_002,https://www.xiaohongshu.com/explore/csv002,夏日清凉好物清单,夏天到了 这些清凉好物闭眼入,2026-07-19,340,160,55,夏日;清凉;好物,夏日好物,2026-07-21T09:00:00Z,xhs
+csv_003,https://www.xiaohongshu.com/explore/csv003,无效数字示例,likes 字段是非法数字应归零处理,2026-07-20,abc,20,5,示例,无效数字,2026-07-22T10:00:00Z,xhs

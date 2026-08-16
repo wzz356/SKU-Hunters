@@ -1,0 +1,116 @@
+/* ============================================================
+ * SKU Hunters · 设计 Token（三层结构）
+ *   Raw tokens      原始色板（无语义，provisional）
+ *   Semantic tokens 语义（action/danger/surface/text）
+ *   Component tokens 组件级取值
+ *
+ * 来源：docs/refactor/v2/03-visual-foundations.md（v1.1，门禁锁定）
+ * 注意：#8C8C8C 仅作大字/装饰，不作普通小字；品牌红 #E60012 ≠ 错误红 #FF4D4F
+ * ============================================================ */
+
+:root {
+  /* ── 1. Raw tokens（原始色板 · provisional）────────────── */
+  --purple-50: #F6F3FF;
+  --purple-400: #B7A8F5;   /* 仅装饰/色带/图标，不可作正文 */
+  --purple-600: #7A5FD0;   /* 主色粉紫 */
+  --purple-700: #6A4FC0;   /* 主色 hover */
+  --red-600: #E60012;      /* 品牌红（仅点缀） */
+  --gray-50: #F7F7F8;      /* 暖灰背景 */
+  --gray-200: #F0F0F0;     /* 边框/分割线 */
+  --gray-500: #8C8C8C;     /* 仅大字/装饰，不作普通小字 */
+  --gray-600: #6B6B6B;     /* 辅助文本（≥4.5:1） */
+  --gray-700: #595959;     /* 次级文本 */
+  --gray-900: #262626;     /* 主文本 */
+  --white: #FFFFFF;
+  --green-500: #52C41A;    /* 成功 */
+  --gold-500: #FAAD14;     /* 警告 */
+  --red-500: #FF4D4F;      /* 错误语义（非品牌红） */
+  --blue-500: #1677FF;     /* 信息 */
+
+  /* ── 2. Semantic tokens（语义）─────────────────────────── */
+  --color-action-primary: var(--purple-600);
+  --color-action-primary-hover: var(--purple-700);
+  --color-action-primary-fg: var(--white);
+  --color-brand-accent: var(--red-600);
+  --color-danger: var(--red-500);
+  --color-success: var(--green-500);
+  --color-warning: var(--gold-500);
+  --color-info: var(--blue-500);
+  --color-surface: var(--white);
+  --color-surface-alt: var(--purple-50);
+  --color-bg: var(--gray-50);
+  --color-text: var(--gray-900);
+  --color-text-secondary: var(--gray-700);
+  --color-text-muted: var(--gray-600);
+  --color-border: var(--gray-200);
+  --color-border-strong: #D9CCFF;   /* 强调边框（紫色描边） */
+  --color-section-label: var(--purple-600);   /* 区块标签小字，白底对比度 4.8:1（≥4.5） */
+
+  /* ── 3. Component tokens（组件）────────────────────────── */
+  --button-primary-bg: var(--color-action-primary);
+  --button-primary-fg: var(--color-action-primary-fg);
+  --card-selected-border: var(--color-action-primary);
+  --card-selected-bg: var(--color-surface-alt);
+  --nav-active-bg: var(--color-surface-alt);
+  --task-card-strip-active: var(--purple-400);
+  --task-card-strip-archived: #BBB;
+
+  /* 图表系列色（顺序固定，不机械替换） */
+  --chart-series-primary: var(--purple-600);
+  --chart-series-secondary: var(--purple-400);
+  --chart-series-accent: var(--red-600);
+  --chart-series-info: var(--blue-500);
+  --chart-accent-fill: rgba(230, 0, 18, 0.06);   /* 图表品牌强调区填充 */
+
+  /* 聊天气泡（用户/AI） */
+  --chat-user-bg: var(--purple-600);
+  --chat-user-fg: var(--white);
+  --chat-ai-bg: var(--gray-200);
+  --chat-ai-fg: var(--gray-900);
+
+  /* 成本校验（商品策略回环） */
+  --cost-pass-bg: #EEF7EF;
+  --cost-pass-fg: #3A7D44;
+  --cost-fail-bg: #FFF0F0;
+  --cost-fail-fg: var(--red-600);   /* 商业指标不达标，用品牌红强调 */
+
+  /* 证据与来源 */
+  --evidence-bg: var(--gray-200);
+  --evidence-fg: var(--gray-700);
+  --source-muted: var(--gray-600);
+
+  /* 强调面板（品牌红点缀的轻量背景/边框） */
+  --surface-danger: #FFF5F5;
+  --border-danger: #FFCDD2;
+
+  /* 方向卡渐变（三个机会方向） */
+  --grad-ip-collect: linear-gradient(135deg, #F3E6FF 0%, #E0CCFA 50%, #FAD1DC 100%);
+  --grad-healing-nature: linear-gradient(135deg, #E0F5EC 0%, #CDE7F0 60%, #B8E6D0 100%);
+  --grad-outdoor-clip: linear-gradient(135deg, #FDF3E0 0%, #F8D5B0 55%, #F5E6B8 100%);
+  --grad-default: linear-gradient(135deg, #F6F3FF 0%, #D9CCFF 100%);
+
+  /* ── 间距 scale（8px 基准）────────────────────────────── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+
+  /* ── 圆角 ──────────────────────────────────────────────── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* ── 阴影（轻）────────────────────────────────────────── */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 6px 20px rgba(122, 95, 208, 0.15);
+
+  /* ── 字体层级 ─────────────────────────────────────────── */
+  --font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-size-page-title: 20px;
+  --font-size-card-title: 15px;
+  --font-size-body: 13px;
+  --font-size-caption: 12px;
+}

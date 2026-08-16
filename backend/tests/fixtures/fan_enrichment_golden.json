@@ -1,0 +1,52 @@
+{
+  "_comment": "小风扇五段式 enrichment 黄金样例（回归基准）。来源：前端旧 FAN_ENRICHMENT（《风扇市场三平台数据趋势分析》报告，1007 条样本），已从业务链路迁出，仅作 Enrichment Agent 输出的 schema 兼容性回归快照，不参与线上/demo 数据流。",
+  "category": "风扇",
+  "trendSummary": {
+    "verdict": "风扇市场正从「降温工具」向「便携化 + 情绪价值 + 场景细分」迁移",
+    "metrics": [
+      { "label": "大盘月同比增速", "value": "+60%~95%", "direction": "up", "note": "2026年1-8月所有月份同比均超+60%" },
+      { "label": "最强增长引擎", "value": "复古风扇 +132%", "direction": "up", "note": "颜值经济 + 复古回潮双重驱动" },
+      { "label": "三平台样本量", "value": "1007 条", "direction": "flat", "note": "小红书33% · 抖音36% · 淘宝31%" }
+    ],
+    "keywords": ["复古风扇", "无叶风扇", "便携小风扇", "户外露营", "AI智能"]
+  },
+  "topicClusters": [
+    { "type": "功能需求", "topics": [
+      { "name": "无叶风扇", "count": 56 },
+      { "name": "便携小风扇", "count": 43 },
+      { "name": "AI智能风扇", "count": 41 },
+      { "name": "USB小风扇", "count": 34 },
+      { "name": "空气循环扇", "count": 33 }
+    ] },
+    { "type": "场景需求", "topics": [
+      { "name": "桌面风扇", "count": 49 },
+      { "name": "空调房闷热", "count": 39 },
+      { "name": "户外露营风扇", "count": 37 },
+      { "name": "夏日降温", "count": 22 }
+    ] },
+    { "type": "情绪与内容", "topics": [
+      { "name": "复古风扇", "count": 36 },
+      { "name": "咱家风扇坏了", "count": 42 },
+      { "name": "夹子音", "count": 37 },
+      { "name": "风扇测评", "count": 35 }
+    ] }
+  ],
+  "subCategoryTrends": [
+    { "name": "复古风扇", "records": 32, "growthPct": 132.0, "momentum": "surge", "note": "同比增速第1" },
+    { "name": "户外/露营风扇", "records": 38, "growthPct": 80.5, "momentum": "surge", "note": "露营经济 + 便携需求" },
+    { "name": "无叶风扇", "records": 103, "growthPct": 74.1, "momentum": "rising", "note": "样本量第1的大盘品类" },
+    { "name": "落地扇", "records": 69, "growthPct": 72.5, "momentum": "rising", "note": "家庭场景基本盘" },
+    { "name": "夹子/挂脖风扇", "records": 45, "growthPct": 68.3, "momentum": "rising", "note": "办公/通勤场景增长强劲" },
+    { "name": "桌面风扇", "records": 76, "growthPct": null, "momentum": "stable", "note": "样本量第2，桌搭场景刚需" },
+    { "name": "AI智能风扇", "records": 60, "growthPct": 20.0, "momentum": "emerging", "note": "结构性新增量" }
+  ],
+  "seasonPlan": {
+    "cycle": [
+      { "phase": "趋势萌芽", "months": "1-3月", "action": "完成设计定稿与打样（淡季同比仍+80%以上，智能化品类逆季增长）" },
+      { "phase": "需求爬坡", "months": "4月", "action": "小批量首发，测试转化" },
+      { "phase": "销售高峰", "months": "5-8月", "action": "营销爆发期，占全年热度65%，卡位618大促" },
+      { "phase": "淡季延续", "months": "9-10月", "action": "工厂直播 + 复古风测评延续流量" }
+    ],
+    "launchSuggestion": "建议次年4月完成首发，卡住618预热窗口"
+  }
+}
