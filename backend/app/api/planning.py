@@ -130,6 +130,24 @@ async def get_plan(plan_id: str):
     }
 
 
+@router.put("/plans/{plan_id}/brief")
+async def update_plan_brief(plan_id: str, payload: dict):
+    """编辑企划约束（攻坚会 P0）：未归档可改；已生成下游产物则作废重置
+
+    响应 reset=true 表示洞察/机会/企划卡已被清空（前端据此提示"需重新生成"）。
+    mode（采集路径）不随编辑改变。
+    """
+    plan = _get_plan_or_404(plan_id)
+    brief = payload.get("brief") or payload  # 兼容直接传 brief
+    try:
+        result = pipeline.update_brief(plan, brief)
+    except ValidationError as e:
+        raise HTTPException(422, detail={"error": {"code": "BRIEF_INVALID", "message": str(e)}}) from e
+    except StateTransitionError as e:
+        raise _state_transition_error(e) from e
+    return {"plan_id": plan_id, "status": plan["status"], "brief": plan["brief"], **result}
+
+
 @router.delete("/plans/{plan_id}", status_code=204)
 async def delete_plan(plan_id: str):
     """删除任务：套 plan 写锁与在途生成串行化；不存在 → 404"""
@@ -142,7 +160,9 @@ async def delete_plan(plan_id: str):
 async def get_insights(plan_id: str):
     plan = _get_plan_or_404(plan_id)
     try:
-        return {"plan_id": plan_id, **pipeline.get_insights(plan)}
+        # to_thread：缓存缺子模块时会同步补跑 LLM（数十秒），直接执行会堵死事件循环
+        insights = await asyncio.to_thread(pipeline.get_insights, plan)
+        return {"plan_id": plan_id, **insights}
     except LLMGenerationError as e:
         raise _llm_generation_error(e) from e
 
@@ -151,7 +171,7 @@ async def get_insights(plan_id: str):
 async def get_opportunities(plan_id: str):
     plan = _get_plan_or_404(plan_id)
     try:
-        opportunities = pipeline.get_opportunities(plan)
+        opportunities = await asyncio.to_thread(pipeline.get_opportunities, plan)
     except LLMGenerationError as e:
         raise _llm_generation_error(e) from e
     return {

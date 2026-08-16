@@ -543,6 +543,32 @@ function CompetitiveMap({ competitiveMap = {}, opportunityPool = [] }) {
 }
 
 // 竞品图板：图片 + 价格 + 卖点卡片墙
+// 攻坚会 P1（2026-08-16）：竞品无图占位样式优化 —— 品牌首字 + 品类图标 + "暂无采集图片"标注，
+// 诚实呈现采集缺口，不冒充实拍图。
+function CompetitorPlaceholder({ name }) {
+  return (
+    <div
+      style={{
+        height: 100, display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', gap: 4,
+        background: 'linear-gradient(135deg, var(--color-bg) 0%, var(--gray-100, #f5f5f5) 100%)',
+        borderBottom: '1px dashed var(--color-border)',
+      }}
+      role="img"
+      aria-label={`${name} 暂无采集图片`}
+    >
+      <div style={{
+        width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', background: '#fff', border: '1px solid var(--color-border)',
+        fontSize: 15, fontWeight: 700, color: 'var(--color-text-secondary)',
+      }}>
+        {name.slice(0, 1)}
+      </div>
+      <div style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>暂无采集图片</div>
+    </div>
+  );
+}
+
 function CompetitorGallery({ products = [] }) {
   return (
     <div style={{ marginTop: 16 }}>
@@ -553,7 +579,7 @@ function CompetitorGallery({ products = [] }) {
             <Card size="small" cover={
               p.imageUrl
                 ? <img src={p.imageUrl} alt={p.name} style={{ height: 100, objectFit: 'cover' }} />
-                : <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)', color: 'var(--color-text-muted)', fontSize: 12 }}>{p.name.slice(0, 2)}</div>
+                : <CompetitorPlaceholder name={p.name} />
             }>
               <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}</div>
               <div style={{ fontSize: 12, color: 'var(--color-brand-accent)' }}>¥{p.price} · 设计 {p.design}</div>

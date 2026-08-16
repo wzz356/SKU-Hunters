@@ -62,3 +62,8 @@ export async function archivePlan(planId) {
 export async function reviewPlan(question, planId) {
   return request(`/plans/${planId}/review`, { method: 'POST', body: { question } });
 }
+
+/** 编辑企划约束（攻坚会 P0）→ 返回 { status, brief, reset }；reset=true 表示下游产物已作废 */
+export async function updatePlanBrief(brief, planId) {
+  return request(`/plans/${planId}/brief`, { method: 'PUT', body: { brief } });
+}

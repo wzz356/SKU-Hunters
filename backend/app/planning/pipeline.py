@@ -87,5 +87,6 @@ from app.planning.service import (  # noqa: F401
     review_plan,
     revise_plan,
     seed_demo,
+    update_brief,
 )
 from app.services import jimeng  # noqa: F401

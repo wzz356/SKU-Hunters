@@ -17,6 +17,7 @@ import {
   getPlan,
   reviewPlan,
   revisePlan,
+  updatePlanBrief,
 } from '../../../api/plans';
 import { getInsights, getOpportunities } from '../../../api/insights';
 import { toCamelBrief } from '../../../shared/utils/normalizeBrief';
@@ -156,6 +157,23 @@ export default function usePlanWorkspace(planId) {
     }
   }, [planId]);
 
+  // ── 编辑企划约束（攻坚会 P0）──────────────────────────
+  // 成功后整体重拉：后端可能已作废下游产物（reset=true），本地状态以后端为准
+  const runUpdateBrief = useCallback(async (newBrief) => {
+    setPendingAction('brief');
+    setError(null);
+    try {
+      const data = await updatePlanBrief(newBrief, planId);
+      await loadPlan();
+      return data;
+    } catch (e) {
+      setError(e);
+      throw e;
+    } finally {
+      setPendingAction(null);
+    }
+  }, [planId, loadPlan]);
+
   // ── 归档 ──────────────────────────────────────────────
   const runArchive = useCallback(async () => {
     setPendingAction('archive');
@@ -179,8 +197,9 @@ export default function usePlanWorkspace(planId) {
     revise: runRevise,
     review: runReview,
     archive: runArchive,
+    updateBrief: runUpdateBrief,
     reload: loadPlan,
-  }), [runGenerateInsights, runGenerateOpportunities, runGeneratePlanCard, runRevise, runReview, runArchive, loadPlan]);
+  }), [runGenerateInsights, runGenerateOpportunities, runGeneratePlanCard, runRevise, runReview, runArchive, runUpdateBrief, loadPlan]);
 
   return {
     plan,

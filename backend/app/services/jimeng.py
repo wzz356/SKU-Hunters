@@ -1,16 +1,22 @@
-"""即梦文生图客户端 — 火山引擎视觉服务（AK/SK V4 签名）
+"""即梦/Seedream 文生图客户端（双通道）
 
-调用链路：CVSync2AsyncSubmitTask 提交任务 → 轮询 CVSync2AsyncGetResult 取图。
+通道 A（优先，2026-08 起官方路径）：火山方舟 Ark —— OpenAI 兼容接口
+    POST https://ark.cn-beijing.volces.com/api/v3/images/generations
+    鉴权 Bearer ARK_API_KEY；模型默认 doubao-seedream-4-0-250828。
+通道 B（旧视觉智能 cv 服务）：AK/SK V4 签名
+    CVSync2AsyncSubmitTask 提交任务 → 轮询 CVSync2AsyncGetResult 取图。
 
 环境变量（backend/.env）：
-    VOLC_ACCESS_KEY_ID / VOLC_SECRET_ACCESS_KEY  AK/SK（必填，缺则降级）
-    JIMENG_REQ_KEY    模型 req_key，默认 jimeng_t2i_v40（即梦图片生成 4.0）
-    JIMENG_TIMEOUT    轮询总超时秒数，默认 60
+    ARK_API_KEY                方舟 API Key（通道 A，优先）
+    JIMENG_ARK_MODEL           方舟模型 ID，默认 doubao-seedream-4-0-250828
+    VOLC_ACCESS_KEY_ID / VOLC_SECRET_ACCESS_KEY  AK/SK（通道 B，缺则降级）
+    JIMENG_REQ_KEY    旧服务模型 req_key，默认 jimeng_t2i_v40
+    JIMENG_TIMEOUT    旧服务轮询总超时秒数，默认 60
 
 降级纪律（与 LLM 客户端一致）：未配置 Key 或任何调用失败 → 返回 fallback，
 不阻塞企划卡生成；前端收到 None 显示占位图。
 
-注意：req_key / 字段名以火山引擎官方文档为准，首次实跑如报错按报错信息调整。
+注意：返回的是火山临时图床 URL（约 24h 时效），演示当天生成。
 """
 
 from __future__ import annotations
@@ -121,9 +127,37 @@ def generate_concept_image(
 ) -> str | None:
     """文生图：prompt → 图片 URL；任何失败返回 fallback（默认 None）
 
+    通道优先级：方舟 ARK_API_KEY → 旧 cv 服务 AK/SK → fallback。
     Returns:
-        图片 URL（return_url 模式）；未配置或失败返回 fallback
+        图片 URL；未配置或失败返回 fallback
     """
+    # 通道 A：火山方舟（OpenAI 兼容，官方现行路径）
+    ark_key = os.getenv("ARK_API_KEY")
+    if ark_key:
+        try:
+            import httpx
+
+            resp = httpx.post(
+                "https://ark.cn-beijing.volces.com/api/v3/images/generations",
+                headers={"Authorization": f"Bearer {ark_key}"},
+                json={
+                    "model": os.getenv("JIMENG_ARK_MODEL", "doubao-seedream-4-0-250828"),
+                    "prompt": prompt,
+                    "size": "2K",   # Seedream 4.0 支持 1K/2K/4K 或显式宽高
+                    "response_format": "url",
+                    "watermark": False,
+                },
+                timeout=120,
+            )
+            resp.raise_for_status()
+            items = resp.json().get("data") or []
+            url = items[0].get("url") if items else None
+            if url:
+                return url
+        except Exception:
+            pass  # 落通道 B / fallback
+
+    # 通道 B：旧视觉智能 cv 服务（AK/SK V4 签名）
     config = _get_config()
     if config is None:
         return fallback

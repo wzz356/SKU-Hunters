@@ -20,6 +20,7 @@ import OpportunityCards from '../../opportunities/OpportunityCards';
 import PlanCard from '../../plan-card/PlanCard';
 import StateCard from '../../../shared/components/StateCard';
 import SourceTag from '../../../shared/components/SourceTag';
+import BriefEditModal from '../components/BriefEditModal';
 import usePlanWorkspace from '../hooks/usePlanWorkspace';
 
 const STEPS = ['企划约束', '洞察驾驶舱', '机会生成', '新品企划卡'];
@@ -34,6 +35,7 @@ export default function TaskFlow() {
   const [step, setStep] = useState(0);
   const [selectedOpp, setSelectedOpp] = useState(null);
   const [archiving, setArchiving] = useState(false);
+  const [briefEditOpen, setBriefEditOpen] = useState(false);
 
   // 按落盘状态恢复 step（含已选方向 / 已生成企划卡）
   useEffect(() => {
@@ -51,6 +53,22 @@ export default function TaskFlow() {
   // 最大可访问 step：未解锁步骤不可跳转（archived 只读，仍可回看 0-3）
   const maxAccessibleStep = STATUS_STEP[ws.status] ?? 0;
   const handleStepChange = (next) => { if (next <= maxAccessibleStep) setStep(next); };
+
+  // ── 原子动作：编辑企划约束（攻坚会 P0）─────────────────
+  const onUpdateBrief = async (newBrief) => {
+    try {
+      const res = await ws.actions.updateBrief(newBrief);
+      setBriefEditOpen(false);
+      setSelectedOpp(null);
+      if (res?.reset) {
+        message.warning('约束已保存：已生成的洞察/机会/企划卡作废，请重新生成');
+      } else {
+        message.success('约束已保存');
+      }
+    } catch (e) {
+      message.error(`约束保存失败：${e?.message || '请检查后端服务'}`);
+    }
+  };
 
   // ── 原子动作：确认约束 → 生成洞察 ──────────────────────
   const onGenerateInsights = async () => {
@@ -154,15 +172,31 @@ export default function TaskFlow() {
             <Descriptions.Item label="上新窗口">{brief.launchWindow || '—'}</Descriptions.Item>
             <Descriptions.Item label="商业目标" span={2}>{(brief.goals || []).map((g) => <Tag key={g}>{g}</Tag>)}</Descriptions.Item>
           </Descriptions>
-          <Button
-            type="primary"
-            style={{ marginTop: 16 }}
-            disabled={isArchived}
-            loading={ws.pendingAction === 'insights'}
-            onClick={onGenerateInsights}
-          >
-            确认约束，开始洞察分析
-          </Button>
+          <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
+            <Button
+              type="primary"
+              disabled={isArchived}
+              loading={ws.pendingAction === 'insights'}
+              onClick={onGenerateInsights}
+            >
+              确认约束，开始洞察分析
+            </Button>
+            <Button
+              disabled={isArchived}
+              loading={ws.pendingAction === 'brief'}
+              onClick={() => setBriefEditOpen(true)}
+            >
+              编辑约束
+            </Button>
+          </div>
+          <BriefEditModal
+            open={briefEditOpen}
+            brief={brief}
+            hasDownstream={ws.status !== 'brief_locked'}
+            submitting={ws.pendingAction === 'brief'}
+            onCancel={() => setBriefEditOpen(false)}
+            onSubmit={onUpdateBrief}
+          />
         </Card>
       )}
 

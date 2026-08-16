@@ -63,7 +63,44 @@ __all__ = [
     "review_plan",
     "revise_plan",
     "seed_demo",
+    "update_brief",
 ]
+
+
+# ── ① 企划约束编辑（2026-08-16 攻坚会 P0：提交后不可改不合理）────────
+
+def update_brief(plan: dict[str, Any], new_brief: dict[str, Any]) -> dict[str, Any]:
+    """编辑企划约束：未归档任意时刻可改；已生成下游产物则作废重置
+
+    数据纪律（攻坚会「防跨品类/跨约束数据串扰」）：约束变了，洞察/机会/
+    企划卡/企划案一律作废，状态回退 brief_locked 重新生成，绝不允许
+    旧约束的产物挂在新约束下。mode（fixture/crawled/live 采集路径）
+    是创建时定的，不随编辑改变。
+
+    返回 {"reset": bool}：reset=True 表示清空了下游产物（前端风险提示闭环）。
+    """
+    with plan_write_lock(plan["plan_id"]):
+        if plan.get("status") == "archived":
+            raise StateTransitionError("非归档状态", "archived", "update-brief")
+        validated = PlanBrief.model_validate(_snake_keys(new_brief))
+        stored = validated.model_dump()
+        stored["mode"] = plan["brief"].get("mode") or plan.get("mode", "fixture")
+        had_downstream = bool(
+            plan.get("insights") or plan.get("opportunities")
+            or plan.get("plan_card") or plan.get("selected_opportunity")
+        )
+        plan["brief"] = stored
+        if had_downstream:
+            plan["insights"] = None
+            plan["opportunities"] = []
+            plan["plan_card"] = None
+            plan["product_proposal"] = None
+            plan["selected_opportunity"] = None
+            plan["data_context"] = None
+            plan["revise_logs"] = []
+            plan["status"] = "brief_locked"
+        _save_state()
+    return {"reset": had_downstream}
 
 
 # ── ② 五看洞察 ─────────────────────────────────────────
@@ -89,8 +126,9 @@ def _ensure_enrichment(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
 
     新 bundle 由 _resolve_insight_bundle 统一挂 enrichment；此处只补历史缓存。
     失败（无 Key/不合契约）不挂键，前端回退基础视图。
+    失败记入 _unavailable 墓碑：避免每次只读打开都重试烧 LLM。
     """
-    if bundle.get("enrichment"):
+    if bundle.get("enrichment") or "enrichment" in bundle.get("_unavailable", []):
         return
     from app.planning.insight_enrichment import build_enrichment
 
@@ -98,6 +136,8 @@ def _ensure_enrichment(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
     enrichment = build_enrichment(category, bundle, plan["brief"])
     if enrichment is not None:
         bundle["enrichment"] = enrichment
+    else:
+        bundle.setdefault("_unavailable", []).append("enrichment")
 
 
 def _ensure_consumer_voice_chains(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
@@ -107,7 +147,7 @@ def _ensure_consumer_voice_chains(plan: dict[str, Any], bundle: dict[str, Any]) 
     归因链 supportsOpportunityIds 引用真实 pool id。失败不挂键，前端不渲染该块。
     """
     cv = bundle.setdefault("consumerVoice", {})
-    if cv.get("painPointChains"):
+    if cv.get("painPointChains") or "painPointChains" in bundle.get("_unavailable", []):
         return
     from app.planning.consumer_voice_agent import build_consumer_voice_chains
 
@@ -116,6 +156,8 @@ def _ensure_consumer_voice_chains(plan: dict[str, Any], bundle: dict[str, Any]) 
     if result:
         cv["userProfile"] = result.get("userProfile")
         cv["painPointChains"] = result.get("painPointChains")
+    else:
+        bundle.setdefault("_unavailable", []).append("painPointChains")
 
 
 def _ensure_competitive_map_analysis(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
@@ -125,7 +167,7 @@ def _ensure_competitive_map_analysis(plan: dict[str, Any], bundle: dict[str, Any
     需求维度代码从 decisionFactors 提取，机会空位 supportsOpportunityIds 强绑机会池 id。
     """
     cm = bundle.setdefault("competitiveMap", {})
-    if cm.get("needDimensions"):
+    if cm.get("needDimensions") or "needDimensions" in bundle.get("_unavailable", []):
         return
     from app.planning.competitive_map_agent import build_competitive_map_analysis
 
@@ -135,6 +177,8 @@ def _ensure_competitive_map_analysis(plan: dict[str, Any], bundle: dict[str, Any
         cm["needDimensions"] = result.get("needDimensions")
         cm["needSatisfaction"] = result.get("needSatisfaction")
         cm["opportunityGaps"] = result.get("opportunityGaps")
+    else:
+        bundle.setdefault("_unavailable", []).append("needDimensions")
 
 
 def _ensure_asset_fit(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
@@ -143,7 +187,7 @@ def _ensure_asset_fit(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
     依赖 opportunityPool + insightBase.ipPool + consumerVoice 决策画像，
     不重新发现机会；ip 引用真实名创资产，无则空。失败不挂键。
     """
-    if bundle.get("assetFit"):
+    if bundle.get("assetFit") or "assetFit" in bundle.get("_unavailable", []):
         return
     from app.planning.asset_fit_agent import build_asset_fit
 
@@ -151,6 +195,8 @@ def _ensure_asset_fit(plan: dict[str, Any], bundle: dict[str, Any]) -> None:
     result = build_asset_fit(category, bundle, plan["brief"])
     if result:
         bundle["assetFit"] = result
+    else:
+        bundle.setdefault("_unavailable", []).append("assetFit")
 
 
 def get_insights(plan: dict[str, Any], advance: bool = False) -> dict[str, Any]:
@@ -171,11 +217,12 @@ def get_insights(plan: dict[str, Any], advance: bool = False) -> dict[str, Any]:
         plan["insights"] = bundle  # 缓存洞察：机会/企划卡复用，非采集品类不重复烧 LLM
         _save_state()  # 落盘：服务重启后缓存仍在，不重复触发 LLM
     else:
-        _ensure_opportunity_pool(plan, bundle)  # 旧缓存补 pool（不落盘，生成机会时统一落）
+        _ensure_opportunity_pool(plan, bundle)  # 旧缓存补 pool
         _ensure_enrichment(plan, bundle)        # 旧缓存补 enrichment（五段式驾驶舱）
         _ensure_consumer_voice_chains(plan, bundle)  # 旧缓存补决策画像 + 归因链
         _ensure_competitive_map_analysis(plan, bundle)  # 旧缓存补需求满足矩阵 + 机会空位
         _ensure_asset_fit(plan, bundle)  # 旧缓存补资产适配
+        _save_state()  # 补跑结果落盘：否则重启即丢，每次打开重复烧 LLM 并阻塞请求
     return bundle
 
 

@@ -272,3 +272,59 @@ def test_review_readonly_on_archived(client):
     assert "answer" in r.json()
     # 复盘追问后仍为 archived，不被改稿
     assert client.get(f"/api/v1/plans/{plan_id}").json()["status"] == "archived"
+
+# ── ①b 企划约束编辑（2026-08-16 攻坚会 P0）─────────────────────────
+
+def test_update_brief_404(client):
+    r = client.put("/api/v1/plans/nope/brief", json={"brief": dict(VALID_BRIEF)})
+    assert r.status_code == 404
+
+def test_update_brief_422_on_invalid(client):
+    plan_id = _create(client)
+    r = client.put(f"/api/v1/plans/{plan_id}/brief", json={"brief": {"category": "小风扇"}})
+    assert r.status_code == 422
+    assert r.json()["detail"]["error"]["code"] == "BRIEF_INVALID"
+
+def test_update_brief_locked_no_reset(client):
+    """brief_locked 状态编辑：只更新约束，reset=false，状态不动"""
+    plan_id = _create(client)
+    new_brief = {**VALID_BRIEF, "theme": "改名后的主题", "costLimit": 30}
+    r = client.put(f"/api/v1/plans/{plan_id}/brief", json={"brief": new_brief})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["reset"] is False
+    assert body["status"] == "brief_locked"
+    assert body["brief"]["theme"] == "改名后的主题"
+    assert body["brief"]["cost_limit"] == 30  # camelCase 不丢字段
+    # mode 不随编辑改变（默认 crawled）
+    assert body["brief"]["mode"] == "crawled"
+
+def test_update_brief_with_downstream_resets(client):
+    """已生成下游产物时编辑：产物全部作废，状态回退 brief_locked（防跨约束串扰）"""
+    plan_id = _create(client)
+    plan = repository.get_plan(plan_id)
+    # 直接置入下游产物（绕过生成链路，HTTP 层只锁重置语义）
+    plan["insights"] = {"trendRadar": {}}
+    plan["opportunities"] = [{"id": "x"}]
+    plan["plan_card"] = {"name": "旧卡"}
+    plan["product_proposal"] = {"name": "旧案"}
+    plan["selected_opportunity"] = "x"
+    plan["status"] = "plan_card_ready"
+    r = client.put(f"/api/v1/plans/{plan_id}/brief",
+                   json={"brief": {**VALID_BRIEF, "category": "雨伞"}})
+    assert r.status_code == 200
+    assert r.json()["reset"] is True
+    detail = client.get(f"/api/v1/plans/{plan_id}").json()
+    assert detail["status"] == "brief_locked"
+    assert detail["plan_card"] is None
+    assert detail["product_proposal"] is None
+    assert detail["selected_opportunity"] is None
+    assert detail["brief"]["category"] == "雨伞"
+
+def test_update_brief_archived_409(client):
+    """已归档任务只读，禁止改约束"""
+    plan_id = _create(client)
+    repository.get_plan(plan_id)["status"] = "archived"
+    r = client.put(f"/api/v1/plans/{plan_id}/brief", json={"brief": dict(VALID_BRIEF)})
+    assert r.status_code == 409
+    assert r.json()["detail"]["error"]["code"] == "INVALID_TRANSITION"
